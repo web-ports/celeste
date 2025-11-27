@@ -1123,47 +1123,7 @@ async function Pe(e) {
         )),
         void 0 === globalThis.URL && (globalThis.URL = S)
     }(Ue),
-    Ue.ENVIRONMENT_IS_PTHREAD ? async function() {
-        (function() {
-            const e = new MessageChannel
-              , t = e.port1
-              , o = e.port2;
-            t.addEventListener("message", (e => {
-                var n;
-                n = JSON.parse(e.data.config),
-                Ie ? a("mono config already received") : (fe(je.config, n),
-                pe(),
-                a("mono config received"),
-                Ie = !0,
-                je.afterConfigLoaded.promise_control.resolve(je.config),
-                _e && n.forwardConsoleLogsToWS && void 0 !== globalThis.WebSocket && je.setup_proxy_console("pthread-worker", console, self.location.href)),
-                t.close(),
-                o.close()
-            }
-            ), {
-                once: !0
-            }),
-            t.start(),
-            self.postMessage({
-                [Le]: {
-                    monoCmd: "preload",
-                    port: o
-                }
-            }, [o])
-        }
-        )(),
-        await je.afterConfigLoaded.promise,
-        function() {
-            const e = je.config;
-            e.assets || Ce(!1, "config.assets must be defined");
-            for (const t of e.assets)
-                H(t)
-        }();
-        const e = ze()
-          , t = await Promise.all(e);
-        return await Fe(t),
-        Ue
-    }() : async function() {
+    async function() {
         var e;
         Ue.configSrc || je.config && 0 !== Object.keys(je.config).length && (je.config.assets || je.config.resources) || (Ue.configSrc = "./blazor.boot.json"),
         await async function(e) {
