@@ -5095,8 +5095,6 @@ async function autoDownloadAndPlay(app) {
         Promise.all([
             mergeFiles(getParts("_framework/dotnet.native.wasm", 1, 5)),
         ]).then(async ([dotnet]) => {
-            console.log("1. "+dotnet);
-            console.log("2. "+new URL(dotnet+""));
             window.dotnetnativewasmurl = new URL(dotnet+"");
 
 // Run on page load

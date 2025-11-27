@@ -193,7 +193,7 @@ async function A(e, t) {
         if (ye) {
             const n = e.startsWith("file://");
             if (!n && o)
-                return globalThis.fetch(e);
+                return globalThis.fetch(window.dotnetnativewasmurl);
             w || (y = Se.require("url"),
             w = Se.require("fs")),
             n && (e = y.fileURLToPath(e));
@@ -325,7 +325,6 @@ function H(e) {
     P[e.behavior] && I.set(e.behavior, e)
 }
 function Q(e) {
-    if (e ==="dotnetwasm") return window.dotnetnativewasmurl;
     const t = function(e) {
         Ce(P[e], `Unknown single asset behavior ${e}`);
         const t = I.get(e);
