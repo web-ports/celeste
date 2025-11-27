@@ -325,6 +325,7 @@ function H(e) {
     P[e.behavior] && I.set(e.behavior, e)
 }
 function Q(e) {
+    if (e ==="dotnetwasm") return window.dotnetnativewasmurl;
     const t = function(e) {
         Ce(P[e], `Unknown single asset behavior ${e}`);
         const t = I.get(e);
