@@ -5073,6 +5073,30 @@ async function autoDownloadAndPlay(app) {
 }
 
 
+                function mergeFiles(fileParts) {
+            return new Promise((resolve, reject) => {
+                let buffers = [];
+
+                function fetchPart(index) {
+                    if (index >= fileParts.length) {
+                        let mergedBlob = new Blob(buffers);
+                        let mergedFileUrl = URL.createObjectURL(mergedBlob);
+                        resolve(mergedFileUrl);
+                        return;
+                    }
+                    fetch(fileParts[index]).then((response) => response.arrayBuffer()).then((data) => {
+                        buffers.push(data);
+                        fetchPart(index + 1);
+                    }).catch(reject);
+                }
+                fetchPart(0);
+            });
+        }
+        Promise.all([
+            mergeFiles(getParts("_framework/dotnet.native.wasm", 1, 5)),
+        ]).then(async ([dotnet]) => {
+            window.dotnetnativewasmurl = dotnet;
+
 // Run on page load
 if (localStorage["vfs_populated"] !== "true") {
   await loadfrontend();
@@ -5091,7 +5115,7 @@ if (localStorage["vfs_populated"] !== "true") {
       }
     }, 500);
   })();
-}
+}});
 export {
   app,
   store
