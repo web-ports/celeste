@@ -5072,7 +5072,6 @@ async function autoDownloadAndPlay(app) {
   }
 }
 
-
                 function mergeFiles(fileParts) {
             return new Promise((resolve, reject) => {
                 let buffers = [];
@@ -5096,6 +5095,7 @@ async function autoDownloadAndPlay(app) {
             mergeFiles(getParts("_framework/dotnet.native.wasm", 1, 5)),
         ]).then(async ([dotnet]) => {
             window.dotnetnativewasmurl = new URL(dotnet+"");
+            document.getElementById("loading-textt").remove();
 const realFetch = globalThis.fetch;
 
 globalThis.fetch = async function (url, ...args) {
