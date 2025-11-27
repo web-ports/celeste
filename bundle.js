@@ -5095,7 +5095,7 @@ async function autoDownloadAndPlay(app) {
         Promise.all([
             mergeFiles(getParts("_framework/dotnet.native.wasm", 1, 5)),
         ]).then(async ([dotnet]) => {
-            window.dotnetnativewasmurl = dotnet;
+            window.dotnetnativewasmurl = new URL(dotnet+"");
 
 // Run on page load
 if (localStorage["vfs_populated"] !== "true") {
