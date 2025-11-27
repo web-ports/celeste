@@ -640,7 +640,16 @@ function isFileURI(filename) {
 // end include: URIUtils.js
 // include: runtime_exceptions.js
 // end include: runtime_exceptions.js
-var wasmBinaryFile = window.dotnetnativewasmurl;
+var wasmBinaryFile;
+if (Module['locateFile']) {
+  wasmBinaryFile = 'dotnet.native.wasm';
+  if (!isDataURI(wasmBinaryFile)) {
+    wasmBinaryFile = locateFile(wasmBinaryFile);
+  }
+} else {
+  // Use bundler-friendly `new URL(..., import.meta.url)` pattern; works in browsers too.
+  wasmBinaryFile = new URL('dotnet.native.wasm', import.meta.url).href;
+}
 
 function getBinary(file) {
   try {

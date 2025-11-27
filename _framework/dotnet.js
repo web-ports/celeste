@@ -193,7 +193,7 @@ async function A(e, t) {
         if (ye) {
             const n = e.startsWith("file://");
             if (!n && o)
-                return globalThis.fetch(window.dotnetnativewasmurl);
+                return globalThis.fetch(e);
             w || (y = Se.require("url"),
             w = Se.require("fs")),
             n && (e = y.fileURLToPath(e));
