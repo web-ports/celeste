@@ -4714,166 +4714,203 @@ function SaveManager() {
 // App.jsx
 function App() {
   this.css = `
-		width: 100vw;
-		height: 100vh;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		margin: 0;
-		padding: 0;
-		background-color: var(--bg);
-		color: var(--fg);
-		overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg);
+    color: var(--fg);
+    overflow: hidden;
 
-		.game {
-			width: 100%;
-			height: 100%;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			overflow: hidden;
+    .game {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
 
-			canvascontainer {
-				display: grid;
-				width: 100vw;
-				height: 100vh;
-				max-width: 100vw;
-				max-height: 100vh;
-				background-color: black;
-				overflow: hidden;
+      canvascontainer {
+        display: grid;
+        width: 100vw;
+        height: 100vh;
+        max-width: 100vw;
+        max-height: 100vh;
+        background-color: black;
+        overflow: hidden;
 
-				& > * {
-					grid-area: 1 / 1;
-				}
+        & > * {
+          grid-area: 1 / 1;
+        }
 
-				& > div {
-				  transition: 0.3s ease;
-					&.hidden {
-						opacity: 0;
-						pointer-events: none;
-						transition: 0.3s ease;
-					}
+        & > div {
+          transition: 0.3s ease;
+          &.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.3s ease;
+          }
 
-					.material-symbols-rounded {
-						font-size: 3em;
-					}
+          .material-symbols-rounded {
+            font-size: 3em;
+          }
 
-					h3 {
-						margin: 0.2rem;
-						font-weight: 570;
-					}
+          h3 {
+            margin: 0.2rem;
+            font-weight: 570;
+          }
 
-					background-color: var(--surface1);
-					user-select: none;
-					text-align: center;
-					color: var(--fg6);
-					font-size: 1.5em;
-					font-weight: 550;
+          background-color: var(--surface1);
+          user-select: none;
+          text-align: center;
+          color: var(--fg6);
+          font-size: 1.5em;
+          font-weight: 550;
 
-					z-index: 5;
-					width: 100%;
-					height: 100%;
-					display: flex;
-					justify-content: center;
-					align-items: center;
-				}
-			}
-			canvas {
-				width: 100%;
-				height: 100%;
-				max-width: 100vw;
-				max-height: 100vh;
-				display: block;
-				object-fit: contain;
-			}
-		}
+          z-index: 5;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+        }
+      }
+      canvas {
+        width: 100%;
+        height: 100%;
+        max-width: 100vw;
+        max-height: 100vh;
+        display: block;
+        object-fit: contain;
+      }
+    }
 
-		dialog:-internal-dialog-in-top-layer::backdrop {
-			background: color-mix(in srgb, black 35%, color-mix(in srgb, var(--bg), transparent 70%))!important;
-		}
+    dialog:-internal-dialog-in-top-layer::backdrop {
+      background: color-mix(in srgb, black 35%, color-mix(in srgb, var(--bg), transparent 70%))!important;
+    }
 
-		dialog {
-			background: var(--bg);
-			color: var(--fg);
-			border: 0.1em solid var(--surface3);
-			border-radius: 0.6em;
-			opacity: 1;
-			scale: 1;
-			max-height: 75vh;
-			width: unset;
-			aspect-ratio: 1 / 1;
+    dialog {
+      background: var(--bg);
+      color: var(--fg);
+      border: 0.1em solid var(--surface3);
+      border-radius: 0.6em;
+      opacity: 1;
+      scale: 1;
+      max-height: 75vh;
+      width: unset;
+      aspect-ratio: 1 / 1;
 
-			transition: opacity 0.25s, transform 0.25s;
-			transition-timing-function: ease;
+      transition: opacity 0.25s, transform 0.25s;
+      transition-timing-function: ease;
 
-			&:not([open]) {
-				display: block;
-				pointer-events: none;
-				transform: scale(0.8);
-				opacity: 0;
-				scale: 0.9;
-			}
+      &:not([open]) {
+        display: block;
+        pointer-events: none;
+        transform: scale(0.8);
+        opacity: 0;
+        scale: 0.9;
+      }
 
-			button {
-				float: right;
-			}
+      button {
+        float: right;
+      }
 
-			& > div {
-				width: 100%;
-			}
-		}
-	`;
+      & > div {
+        width: 100%;
+      }
+    }
+  `;
+
+  // ---- NEW LOADING STATE ----
+  this.firstLoad = !localStorage["vfs_populated"];
+  this.loadingText = "Preparing…";
+  this.loadingProgress = "";
+  this.loadingSub = "";
+
+  // ---- ORIGINAL STATE ----
   this.loaded = false;
   this.started = false;
   this.allowPlay = false;
+
   let updatePlay = () => {
     this.allowPlay = this.loaded || !this.started;
   };
   handle(use(this.loaded), updatePlay);
   handle(use(this.started), updatePlay);
+
   window.initPromise = (async () => {
-    await init();
+    await init(); // initializes JS side
     this.loaded = true;
     log("var(--success)", "Loaded frontend!");
   })();
+
   this.fullscreen = false;
   document.addEventListener("fullscreenchange", () => {
     this.fullscreen = document.fullscreen;
   });
+
   setInterval(() => {
     this.fps = fps;
   }, 1000);
 
+  // ---- AUTO START ONCE LOADING FINISHES ----
   const startgame = () => {
     this.started = true;
     start(this.canvas);
     this.allowPlay = false;
   };
 
+  // ---- TRIGGER LOADER ----
+  setTimeout(() => {
+    autoDownloadAndPlay(this).then(() => {
+      // autoDownloadAndPlay sets this.started = true automatically
+    });
+  }, 30);
+
+  // ---- UI ----
   return h("main", { class: [use(store.theme)] },
     h("div", { class: "game" },
       h("canvascontainer", null,
-        h("div", { class: [use(this.started, (f) => f && "hidden")] },
+
+        // ---- LOADING OVERLAY ----
+        h("div", { class: [use(this.started, s => s && "hidden")] },
           h("div", null,
-            h("span", { class: "material-symbols-rounded" }, "videogame_asset"),
+            h("span", { class: "material-symbols-rounded" }, "hourglass_top"),
             h("br", null),
-            h("h3", null, "Game starting, Please wait..")
+
+            this.firstLoad
+              ? h("h3", null, "First time loading! This may take a while…")
+              : h("h3", null, "Loading assets…"),
+
+            h("p", null, use(this.loadingText)),
+            h("p", null, use(this.loadingProgress)),
+            h("p", null, use(this.loadingSub))
           )
         ),
+
+        // ---- GAME CANVAS ----
         h("canvas", {
           id: "canvas",
           "bind:this": use(this.canvas),
-          "on:contextmenu": (e) => e.preventDefault()
+          "on:contextmenu": e => e.preventDefault()
         })
       )
     ),
+
+    // ---- FILE EXPLORER DIALOG ----
     h("dialog", { "bind:this": use(this.fs), id: "fs" },
       h("button", { "on:click": () => this.fs.close(), class: "plain" },
         h("span", { class: "material-symbols-rounded" }, "close")
       ),
       h(FSExplorer, null)
     ),
+
+    // ---- SAVES MENU ----
     h("dialog", { "bind:this": use(this.savesmenu) },
       h("button", { "on:click": () => this.savesmenu.close(), class: "plain" },
         h("span", { class: "material-symbols-rounded" }, "close")
@@ -4882,6 +4919,7 @@ function App() {
     )
   );
 }
+
 function FuckMozilla() {
   this.css = `
 		width: min(960px, 100%);
@@ -4960,68 +4998,84 @@ async function loadfrontend() {
   app = h(App).$;
   document.body.appendChild(app.root);
 }
-
-// Auto-download and play functionality
-// Auto-download and play functionality
-async function autoDownloadAndPlay() {
-  let encbuf;
   
-  if (window.SINGLEFILE) {
-    encbuf = window.xorbuf;
-    window.xorbuf = null;
-  } else {
-    // Download assets
-    console.log("Downloading assets...");
-    encbuf = new Uint8Array(SIZE);
-    
-    if (SPLIT) {
-      await Promise.all([...chunkify(splits.entries(), Math.ceil(splits.length / 5))].map(async (chunk) => {
-        for (let [idx, file] of chunk) {
-          let data = await fetch(`_framework/data/${file}`);
-          let buf = new Uint8Array(await data.arrayBuffer());
-          encbuf.set(buf, idx * CHUNKSIZE);
-        }
-      }));
-    } else {
-      let data = await fetch("_framework/data.data");
-      let cur = 0;
-      for await (const chunk of data.body) {
-        encbuf.set(chunk, cur);
-        cur += chunk.length;
+      function getParts(file, start, end) {
+          let parts = [];
+          for (let i = start; i <= end; i++) {
+              parts.push(file + ".part" + i);
+          }
+          return parts;
       }
-    }
-    console.log("Assets downloaded");
-  }
 
-  // Initialize (only if not already initialized)
-  console.log("Initializing...");
-  window.assetblob = URL.createObjectURL(new Blob([encbuf]));
-  
-  if (!initted) {
-    await init();
-  }
-  
-  await new Promise((r) => loadData(dotnet.instance.Module, r));
-  console.info("Cached and loaded assets into VFS");
-  localStorage["vfs_populated"] = true;
-  
-  // Load frontend
-  await loadfrontend();
-  
-  // Auto-start the game
-  console.log("Starting game...");
-  setTimeout(() => {
-    if (app && app.canvas) {
+// Auto-download and play functionality
+async function autoDownloadAndPlay(app) {
+  try {
+    const parts = getParts("_framework/data/data.data", 1, 30);
+    const total = parts.length;
+
+    app.loadingText = "Starting download…";
+    app.loadingProgress = "";
+    app.loadingSub = "";
+
+    // Fetch each part with progress
+    const buffers = [];
+    for (let i = 0; i < total; i++) {
+      const url = parts[i];
+
+      app.loadingText = `Downloading asset files…`;
+      app.loadingProgress = `File ${i + 1} / ${total}`;
+      app.loadingSub = url;
+
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Failed to fetch: " + url);
+
+      const buf = await res.arrayBuffer();
+      buffers.push(buf);
+    }
+
+    app.loadingText = "Merging downloaded data…";
+    app.loadingSub = "";
+    app.loadingProgress = "";
+
+    // Merge
+    let totalLen = buffers.reduce((s, b) => s + b.byteLength, 0);
+    let merged = new Uint8Array(totalLen);
+    let off = 0;
+
+    for (let b of buffers) {
+      merged.set(new Uint8Array(b), off);
+      off += b.byteLength;
+    }
+
+    window.assetblob = URL.createObjectURL(new Blob([merged]));
+
+    app.loadingText = "Initializing runtime…";
+
+    if (!initted) {
+      await init();
+    }
+
+    await new Promise(r => loadData(dotnet.instance.Module, r));
+    localStorage["vfs_populated"] = "1";
+
+    app.loadingText = "Almost ready…";
+
+    setTimeout(() => {
       app.started = true;
       start(app.canvas);
-      app.allowPlay = false;
-    }
-  }, 100);
+    }, 150);
+
+  } catch (err) {
+    console.error(err);
+    app.loadingText = "Error during load";
+    app.loadingSub = err.message;
+  }
 }
+
 
 // Run on page load
 if (localStorage["vfs_populated"] !== "true") {
-  autoDownloadAndPlay();
+  await loadfrontend();
 } else {
   // For cached version, wait for the App's init to complete
   (async () => {
